@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import {Link} from 'react-router-dom';
 import {NavLink} from 'react-router-dom';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { addTask, deleteTask } from '../redux/tasksSlice';
+import { addTask, deleteTask, completedTask, deleteAllCompletedTasks } from '../redux/tasksSlice';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid'; 
@@ -30,6 +30,7 @@ const Tasks = () => {
   const [newTaskValue, setNewTaskValue] = useState(''); 
   const [taskToBeDeleted, setTaskToBeDeleted] = useState('');
   const [deleteDialogueOpen, setDeleteDialogueOpen] = useState(false);
+  const [deleteDialogueUsage, setDeleteDialogueUsage] = useState('');
 
 
   const handleAddNewTask = () =>{
@@ -47,16 +48,29 @@ const Tasks = () => {
     setTaskToBeDeleted('')
   };
 
-  const openDeleteDialogue = (taskid) => {
+  const openDeleteTaskDialogue = (reason,taskid) => {
+    setDeleteDialogueUsage(reason)
     setDeleteDialogueOpen(true);
-    setTaskToBeDeleted(taskid)
+    if (reason === 'single') {
+      setTaskToBeDeleted(taskid)
+    }
   }
 
   const handleDeleteDialogueAgree = () => {
-    dispatch(deleteTask(taskToBeDeleted)) ;
+    if (deleteDialogueUsage === 'single') {
+      dispatch(deleteTask(taskToBeDeleted)) ; 
+    }
+    else{
+      dispatch(deleteAllCompletedTasks())
+    }
     setDeleteDialogueOpen(false);
     setTaskToBeDeleted('')
+    setDeleteDialogueUsage('')
   }
+
+  const handleTaskCompletedChange = (id) => { 
+    dispatch(completedTask(id)) 
+  } 
 
   useEffect(() => {
     document.title = 'Tasks | Enneas Tasks'; 
@@ -78,14 +92,23 @@ const Tasks = () => {
             {
               tasksState.tasks.length>0 && tasksState.error === '' && tasksState.status === 'ready' && 
               tasksState.tasks.map((task,i) => (
+
+                
                 <div key={i}> 
+
+                  <Checkbox
+                    checked={task.completed}
+                    onChange={()=>handleTaskCompletedChange(task.id)}
+                    inputProps={{ 'aria-label': 'controlled' }}
+                  />
+
                   <p>{task.title}</p>
                   <p>{task.dateCreated}</p>
                   
 
-                  <Button variant='outlined' onClick={()=>openDeleteDialogue(task.id)}  >
+                  <Button variant='outlined' onClick={()=>openDeleteTaskDialogue('single', task.id)}  >
                     <ClearIcon style={{fontSize:'20px'}} /> 
-                </Button>
+                  </Button>
                 </div>
               ))
             }
@@ -104,6 +127,10 @@ const Tasks = () => {
               tasksState.error !== '' && 
               <p>{tasksState.error}</p>
             }
+
+            <Button variant='outlined' onClick={()=>openDeleteTaskDialogue('completed')}  >
+              Delete All Completed Tasks
+            </Button>
           </Grid> 
         </Grid> 
 
@@ -114,10 +141,10 @@ const Tasks = () => {
         onClose={handleDeleteDialogueClose}
         aria-describedby="alert-dialog-slide-description"
       >
-        <DialogTitle>{"Delete Task ?"}</DialogTitle>
+        <DialogTitle>{deleteDialogueUsage==='single'? "Delete Task ?" : "Delete All Completed Tasks ?"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
-            Once it's gone, it's gone. Forever.
+            {deleteDialogueUsage==='single'? "Once it's gone, it's gone. Forever." : "Once they are gone, they are gone. Forever."}
           </DialogContentText>
         </DialogContent>
         <DialogActions>

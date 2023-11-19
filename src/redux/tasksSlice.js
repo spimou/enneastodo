@@ -42,7 +42,7 @@ export const tasksSlice = createSlice({
                 id:dateNow,
                 title:action.payload,
                 dateCreated:date,
-                completed:true
+                completed:false
             }
             state.tasks.push(newTask)
             state.status='ready';
@@ -73,14 +73,54 @@ export const tasksSlice = createSlice({
             catch(e) {
                 state.error='Error while deleting task';
             } 
-
         },  
+        completedTask:(state, action) =>{
+
+            state.tasks.forEach(task => {
+                if (task.id === action.payload) {
+                    task.completed = !task.completed
+                }
+            });
+            state.status='ready';
+            state.error='';
+
+            try {
+                let tasksls = localStorage.getItem('tasksls')
+                tasksls = JSON.parse(tasksls) 
+                tasksls.forEach(task => {
+                    if (task.id === action.payload) {
+                        task.completed = !task.completed
+                    }
+                });
+                localStorage.setItem('tasksls', JSON.stringify(tasksls))
+            } 
+            catch(e) { 
+                state.error='Error while updating complition';
+            }   
+        },
+
+        deleteAllCompletedTasks:(state)=>{
+            let unCompletedTasks = state.tasks.filter((e)=>
+                e.completed === false 
+            )
+            state.tasks = unCompletedTasks;
+            state.status='ready';
+            state.error='';
+            try { 
+                localStorage.setItem('tasksls', JSON.stringify(unCompletedTasks))
+            } 
+            catch(e) { 
+                state.error='Error while deleting completed tasks';
+            }  
+
+        },
+
         setTaskError:(state, action)=>{
             state.error = action.payload; 
         }
     }
 })
 
-export const {addTask, setTaskError, updateStoreFromMemory, beginWithNoTasks, deleteTask} = tasksSlice.actions
+export const {addTask, setTaskError, updateStoreFromMemory, beginWithNoTasks, deleteTask, completedTask, deleteAllCompletedTasks} = tasksSlice.actions
 
 export default tasksSlice.reducer
