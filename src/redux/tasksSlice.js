@@ -42,7 +42,7 @@ export const tasksSlice = createSlice({
                 id:dateNow,
                 title:action.payload,
                 dateCreated:date,
-                completed:false
+                completed:true
             }
             state.tasks.push(newTask)
             state.status='ready';

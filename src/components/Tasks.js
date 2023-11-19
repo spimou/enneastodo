@@ -11,7 +11,15 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid'; 
 import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
+import Checkbox from '@mui/material/Checkbox';
 
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Slide from '@mui/material/Slide';
+import { TransitionProps } from '@mui/material/transitions'; 
 
 
 const Tasks = () => {  
@@ -19,7 +27,10 @@ const Tasks = () => {
   const tasksState = useSelector(state => state.tasksSlice)
   const dispatch = useDispatch();
   
-  const [newTaskValue, setNewTaskValue] = useState('');
+  const [newTaskValue, setNewTaskValue] = useState(''); 
+  const [taskToBeDeleted, setTaskToBeDeleted] = useState('');
+  const [deleteDialogueOpen, setDeleteDialogueOpen] = useState(false);
+
 
   const handleAddNewTask = () =>{
     if (newTaskValue === '') {
@@ -27,11 +38,22 @@ const Tasks = () => {
     }
     dispatch(addTask(newTaskValue))
     setNewTaskValue('')
+  } 
+
+  const handleDeleteDialogueClose = () => {
+    setDeleteDialogueOpen(false);
+    setTaskToBeDeleted('')
+  };
+
+  const openDeleteDialogue = (taskid) => {
+    setDeleteDialogueOpen(true);
+    setTaskToBeDeleted(taskid)
   }
 
-  
-  const handleDeleteNewTask = (id) =>{  
-    dispatch(deleteTask(id)) ;
+  const handleDeleteDialogueAgree = () => {
+    dispatch(deleteTask(taskToBeDeleted)) ;
+    setDeleteDialogueOpen(false);
+    setTaskToBeDeleted('')
   }
 
   useEffect(() => {
@@ -54,12 +76,12 @@ const Tasks = () => {
             {
               tasksState.tasks.length>0 && tasksState.error === '' && tasksState.status === 'ready' && 
               tasksState.tasks.map((task,i) => (
-                <div key={i}>
+                <div key={i}> 
                   <p>{task.title}</p>
                   <p>{task.dateCreated}</p>
                   
 
-                  <Button variant='outlined' onClick={()=>handleDeleteNewTask(task.id)}  >
+                  <Button variant='outlined' onClick={()=>openDeleteDialogue(task.id)}  >
                     <ClearIcon style={{fontSize:'20px'}} /> 
                 </Button>
                 </div>
@@ -84,7 +106,23 @@ const Tasks = () => {
         </Grid> 
 
 
-
+      <Dialog
+        open={deleteDialogueOpen} 
+        keepMounted
+        onClose={handleDeleteDialogueClose}
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle>{"Delete Task ?"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+            Once it's gone, it's gone. Forever.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteDialogueClose}>Cancel</Button>
+          <Button onClick={handleDeleteDialogueAgree}>OK</Button>
+        </DialogActions>
+      </Dialog>
             
     </Box>  
   )
