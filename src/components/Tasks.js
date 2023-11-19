@@ -11,15 +11,12 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid'; 
 import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
-import Checkbox from '@mui/material/Checkbox';
-
+import Checkbox from '@mui/material/Checkbox'; 
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import Slide from '@mui/material/Slide';
-import { TransitionProps } from '@mui/material/transitions'; 
+import DialogTitle from '@mui/material/DialogTitle';  
 
 
 const Tasks = () => {  
@@ -40,6 +37,12 @@ const Tasks = () => {
     dispatch(addTask(newTaskValue))
     setNewTaskValue('')
   } 
+
+  const handleEnterKeyNewTask = (e) => {
+    if (e.key === 'Enter') { 
+      handleAddNewTask();  
+    } 
+  }
 
   const handleDeleteDialogueClose = (e, reason) => {
     if (reason && reason == "backdropClick") 
@@ -80,57 +83,94 @@ const Tasks = () => {
 
     <Box className='generalContainer' style={{ backgroundImage: ` linear-gradient(to bottom, rgba(128,128,128,0.6), rgba(128,128,128,0.6)), url(${window.location.origin+'/ui-images/notes.webp'})`}} >
 
-        <Grid container spacing={1}>
-          <Grid item xs={10}  xl={8} sx={{backgroundColor:'rgba(128, 128, 128, 0.3)', margin:'0 auto'}}> 
-            <TextField size='small'  id="addTaskText" label="Add task" variant="outlined" value={newTaskValue} onChange={(e) => setNewTaskValue(e.target.value)} />
-            
+        <Grid container spacing={1} justifyContent="center" >
+          <Grid item xs={10}  xl={8} sx={{padding:'0 !important', backgroundColor:'rgba(128, 128, 128, 0.7)'}}> 
 
-            <Button variant='outlined' onClick={handleAddNewTask}  >
-                    <AddIcon style={{fontSize:'20px'}} /> 
-                </Button>
+            <Box className="taskPageComponent" sx={{textAlign:'center'}}> 
+              <TextField size='small'  id="addTaskText" label="Add task" sx={{width:'60%'}}  value={newTaskValue} 
+                onChange={(e) => setNewTaskValue(e.target.value)} 
+                onKeyDown={handleEnterKeyNewTask}
+              />          
+              <Button  className='taskActionButton' variant="outlined" size="large"  onClick={handleAddNewTask}  >
+                <AddIcon style={{fontSize:'20px'}} /> 
+              </Button>
+            </Box>
+
+            <Box className="taskPageComponent" sx={{height:'calc( 100vh - 235px )', overflowY:'scroll'}}>
     
             {
               tasksState.tasks.length>0 && tasksState.error === '' && tasksState.status === 'ready' && 
               tasksState.tasks.map((task,i) => (
 
                 
-                <div key={i}> 
+                <Box className='taskPad'  key={i}>  
 
-                  <Checkbox
-                    checked={task.completed}
-                    onChange={()=>handleTaskCompletedChange(task.id)}
-                    inputProps={{ 'aria-label': 'controlled' }}
-                  />
+                <Box sx={{ display: 'flex' }} >
+                  <Box>
+                    <Checkbox 
+                      checked={task.completed}
+                      sx={{display:'inline'}}
+                      onChange={()=>handleTaskCompletedChange(task.id)}
+                      inputProps={{ 'aria-label': 'controlled' }}
+                    /> 
+                    <Box sx={{display:'inline', fontSize:'20px'}}  > 
+                      {task.title}   
+                    </Box>
+                  </Box>
+                  <Box  sx={{ flexGrow: 1 }}></Box>
+                  <Box>
+                    <Button  className='taskDeleteButton' variant="outlined" size="large"   onClick={()=>openDeleteTaskDialogue('single', task.id)}  >
+                      <ClearIcon style={{fontSize:'20px'}} /> 
+                    </Button> 
+                  </Box>
+                </Box>   
 
-                  <p>{task.title}</p>
-                  <p>{task.dateCreated}</p>
+
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'flex-end',
+                          flexDirection: 'row',
+                          p: 1,
+                          m: 1, 
+                          borderRadius: 1,
+                        }}
+                      >
+                        <small>
+                          created :  {task.dateCreated} 
+                        </small>
+                      </Box>
+                     
+
                   
-
-                  <Button variant='outlined' onClick={()=>openDeleteTaskDialogue('single', task.id)}  >
-                    <ClearIcon style={{fontSize:'20px'}} /> 
-                  </Button>
-                </div>
+                </Box>
               ))
             }
     
             {
               tasksState.tasks.length === 0 && tasksState.error === '' && tasksState.status === 'ready' && 
-              <p>start by adding a new task</p>
+              <Box className='taskListMessage' >start by adding a new task</Box>
             }
     
             {
               tasksState.tasks.length === 0 && tasksState.error === '' && tasksState.status === 'idle' && 
-              <p>loading</p>
+              <Box className='taskListMessage' >loading</Box>
             }
     
             {
               tasksState.error !== '' && 
-              <p>{tasksState.error}</p>
+              <Box className='taskListMessage' >{tasksState.error}</Box>
             }
 
-            <Button variant='outlined' onClick={()=>openDeleteTaskDialogue('completed')}  >
-              Delete All Completed Tasks
-            </Button>
+            </Box>
+
+            <Box className="taskPageComponent" sx={{textAlign:'center'}}>
+              <Button  className='taskActionButton' variant="outlined" size="large" onClick={()=>openDeleteTaskDialogue('completed')}  >
+                Delete All Completed Tasks
+              </Button>
+            </Box>
+
+
           </Grid> 
         </Grid> 
 

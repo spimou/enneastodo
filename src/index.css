@@ -14,9 +14,41 @@ code {
 }
 
 .generalContainer{
-  min-height:calc( 100vh - 48px );
+  height:calc( 100vh - 48px );
   background-color:lightgrey;
-  /* background-image: url(${window.location.origin+'/ui-images/notes.webp'}); */
   background-size: cover;
-  height: 100vh;
+}
+
+.taskPageComponent{
+  margin:10px auto; 
+  padding: 10px;
+  border-bottom : 1px solid darkorange; 
+  box-shadow: 2px 5px 4px black;
+}
+
+
+.taskActionButton {
+  height: 40px;
+  background-color: lightgray!important; 
+  margin: 0 20px!important;
+  border:2px solid orange!important;
+}
+
+.taskDeleteButton {
+  height: 40px; 
+  margin: 0 10px!important;
+  border:2px solid darkgrey!important;
+}
+
+.taskPad{
+  margin: 5px;
+  padding: 5px 0;
+  border-bottom: 1px solid orange;
+}
+ 
+.taskListMessage{
+  margin: 10px auto;
+  color: orange;
+  width: 50%;
+  text-align: center;
 }
