@@ -50,20 +50,37 @@ export const tasksSlice = createSlice({
             try {
                 let tasksls = localStorage.getItem('tasksls')
                 tasksls = JSON.parse(tasksls) 
-                tasksls.push(newTask)
-                console.log('tasksls', tasksls);
+                tasksls.push(newTask) 
                 localStorage.setItem('tasksls', JSON.stringify(tasksls))
             } 
             catch(e) {
                 state.error='Error while adding task';
             } 
         }, 
+        deleteTask:(state, action) =>{ 
+            let newTasks = state.tasks.filter((e)=>
+                e.id != action.payload
+            )
+            state.tasks = newTasks;
+            state.status='ready';
+            state.error='';
+            try {
+                let tasksls = localStorage.getItem('tasksls')
+                tasksls = JSON.parse(tasksls) 
+                tasksls = newTasks 
+                localStorage.setItem('tasksls', JSON.stringify(tasksls))
+            } 
+            catch(e) {
+                state.error='Error while deleting task';
+            } 
+
+        },  
         setTaskError:(state, action)=>{
             state.error = action.payload; 
         }
     }
 })
 
-export const {addTask, setTaskError, updateStoreFromMemory, beginWithNoTasks} = tasksSlice.actions
+export const {addTask, setTaskError, updateStoreFromMemory, beginWithNoTasks, deleteTask} = tasksSlice.actions
 
 export default tasksSlice.reducer

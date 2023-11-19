@@ -5,11 +5,12 @@ import Box from '@mui/material/Box';
 import {Link} from 'react-router-dom';
 import {NavLink} from 'react-router-dom';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { addTask } from '../redux/tasksSlice';
+import { addTask, deleteTask } from '../redux/tasksSlice';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid'; 
-
+import AddIcon from '@mui/icons-material/Add';
+import ClearIcon from '@mui/icons-material/Clear';
 
 
 
@@ -28,6 +29,11 @@ const Tasks = () => {
     setNewTaskValue('')
   }
 
+  
+  const handleDeleteNewTask = (id) =>{  
+    dispatch(deleteTask(id)) ;
+  }
+
   useEffect(() => {
     document.title = 'Tasks | Enneas Tasks'; 
     
@@ -37,17 +43,26 @@ const Tasks = () => {
     <Box className='generalContainer' style={{ backgroundImage: ` linear-gradient(to bottom, rgba(128,128,128,0.6), rgba(128,128,128,0.6)), url(${window.location.origin+'/ui-images/notes.webp'})`}} >
 
         <Grid container spacing={1}>
-          <Grid item xs={12} sm={10} md={10} xl={8} sx={{backgroundColor:'rgba(128, 128, 128, 0.3)', margin:'0 auto'}}> 
+          <Grid item xs={10}  xl={8} sx={{backgroundColor:'rgba(128, 128, 128, 0.3)', margin:'0 auto'}}> 
             <TextField size='small'  id="addTaskText" label="Add task" variant="outlined" value={newTaskValue} onChange={(e) => setNewTaskValue(e.target.value)} />
             
-            <Button   variant="outlined" onClick={handleAddNewTask} >
-              Add
-            </Button>
+
+            <Button variant='outlined' onClick={handleAddNewTask}  >
+                    <AddIcon style={{fontSize:'20px'}} /> 
+                </Button>
     
             {
               tasksState.tasks.length>0 && tasksState.error === '' && tasksState.status === 'ready' && 
               tasksState.tasks.map((task,i) => (
-                <div key={i}>{task.title}</div>
+                <div key={i}>
+                  <p>{task.title}</p>
+                  <p>{task.dateCreated}</p>
+                  
+
+                  <Button variant='outlined' onClick={()=>handleDeleteNewTask(task.id)}  >
+                    <ClearIcon style={{fontSize:'20px'}} /> 
+                </Button>
+                </div>
               ))
             }
     
