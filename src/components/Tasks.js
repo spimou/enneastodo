@@ -100,48 +100,44 @@ const Tasks = () => {
     
             {
               tasksState.tasks.length>0 && tasksState.error === '' && tasksState.status === 'ready' && 
-              tasksState.tasks.map((task,i) => (
+              tasksState.tasks.map((task,i) => ( 
 
-                
                 <Box className='taskPad'  key={i}>  
 
-                <Box sx={{ display: 'flex' }} >
-                  <Box>
-                    <Checkbox 
-                      checked={task.completed}
-                      sx={{display:'inline'}}
-                      onChange={()=>handleTaskCompletedChange(task.id)}
-                      inputProps={{ 'aria-label': 'controlled' }}
-                    /> 
-                    <Box sx={{display:'inline', fontSize:'20px'}}  > 
-                      {task.title}   
-                    </Box>
-                  </Box>
-                  <Box  sx={{ flexGrow: 1 }}></Box>
-                  <Box>
-                    <Button  className='taskDeleteButton' variant="outlined" size="large"   onClick={()=>openDeleteTaskDialogue('single', task.id)}  >
-                      <ClearIcon style={{fontSize:'20px'}} /> 
-                    </Button> 
-                  </Box>
-                </Box>   
-
-
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          justifyContent: 'flex-end',
-                          flexDirection: 'row',
-                          p: 1,
-                          m: 1, 
-                          borderRadius: 1,
-                        }}
-                      >
-                        <small>
-                          created :  {task.dateCreated} 
-                        </small>
+                  <Box sx={{ display: 'flex' }} className={task.completed ? 'taskCompletedStyle' : 'taskCompleted'} >
+                    <Box>
+                      <Checkbox 
+                        checked={task.completed}
+                        sx={{display:'inline'}}
+                        onChange={()=>handleTaskCompletedChange(task.id)}
+                        inputProps={{ 'aria-label': 'controlled' }}
+                      /> 
+                      <Box sx={{display:'inline', fontSize:'20px'}}  > 
+                        {task.title}   
                       </Box>
-                     
+                    </Box>
+                    <Box  sx={{ flexGrow: 1 }}></Box>
+                    <Box>
+                      <Button  className='taskDeleteButton' variant="outlined" size="large"   onClick={()=>openDeleteTaskDialogue('single', task.id)}  >
+                        <ClearIcon style={{fontSize:'20px'}} /> 
+                      </Button> 
+                    </Box>
+                  </Box>   
 
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'flex-end',
+                      flexDirection: 'row',
+                      p: 1,
+                      m: 1, 
+                      borderRadius: 1,
+                    }}
+                  >
+                    <small>
+                      created :  {task.dateCreated} 
+                    </small>
+                  </Box> 
                   
                 </Box>
               ))
