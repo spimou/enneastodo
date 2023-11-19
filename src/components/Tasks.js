@@ -40,7 +40,9 @@ const Tasks = () => {
     setNewTaskValue('')
   } 
 
-  const handleDeleteDialogueClose = () => {
+  const handleDeleteDialogueClose = (e, reason) => {
+    if (reason && reason == "backdropClick") 
+    return;
     setDeleteDialogueOpen(false);
     setTaskToBeDeleted('')
   };
