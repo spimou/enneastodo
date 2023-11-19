@@ -45,6 +45,8 @@ export const tasksSlice = createSlice({
                 completed:false
             }
             state.tasks.push(newTask)
+            state.status='ready';
+            state.error='';
             try {
                 let tasksls = localStorage.getItem('tasksls')
                 tasksls = JSON.parse(tasksls) 
@@ -53,7 +55,7 @@ export const tasksSlice = createSlice({
                 localStorage.setItem('tasksls', JSON.stringify(tasksls))
             } 
             catch(e) {
-                console.log(e);
+                state.error='Error while adding task';
             } 
         }, 
         setTaskError:(state, action)=>{
